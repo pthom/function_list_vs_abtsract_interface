@@ -1,30 +1,35 @@
 #include <functional>
 #include <memory>
 
-///// Tooling in order to store state
-struct AnyState 
+
+// Any state shall be overrident by all the states
+struct AnyState
 {
   virtual ~AnyState() = default;
 };
 
-template<class AnyFunctionStruct>
-class StatefulFunctions
+
+// StatefulFunctionList contains the function list (which is accessible by the operator ->)
+// It will be stored in the application code as a kind of "pointer to the function list",
+// i.e an "interface implementation".
+//
+// It also contains a hidden state, which can only be accessed at creation time
+// (when filling the function list implementations)
+template<class AnyConcreteFunctionList>
+class StatefulFunctionList
 {
 public:
-  StatefulFunctions(std::unique_ptr<AnyState> && state) :
-    state_(std::move(state)) {}
+  virtual ~StatefulFunctionList() = default;
 
-  AnyFunctionStruct * operator->() {
+  StatefulFunctionList(std::shared_ptr<AnyState> && state) : state_(state) {}
+
+  // operator-> : access to the inner function list from the application code
+  AnyConcreteFunctionList * operator->() {
     return &functions_;
   }
 
-  template<class State>
-  State * state()
-  {
-    return dynamic_cast<State *> (state_.get());
-  }
-
 private:
-  std::unique_ptr<AnyState> state_;
-  AnyFunctionStruct functions_;
+  // the state is totally hidden from the application code
+  std::shared_ptr<AnyState> state_; 
+  AnyConcreteFunctionList functions_;
 };
