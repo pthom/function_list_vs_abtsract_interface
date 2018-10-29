@@ -1,0 +1,13 @@
+//////////////////////////////////////////////////////////////
+// AppSettings
+//////////////////////////////////////////////////////////////
+struct AppSettings
+{
+  bool useCameraMock;
+};
+inline AppSettings MakeMockAppSettings()
+{
+  AppSettings settings;
+  settings.useCameraMock = true;
+  return settings;
+}

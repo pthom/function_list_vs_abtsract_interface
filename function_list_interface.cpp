@@ -4,21 +4,8 @@
 
 #include "stateful_functions.h"
 #include "image_with_counter.h"
-
-
-//////////////////////////////////////////////////////////////
-// AppSettings
-//////////////////////////////////////////////////////////////
-struct AppSettings
-{
-  bool useCameraMock;
-};
-AppSettings MakeMockAppSettings()
-{
-  AppSettings settings;
-  settings.useCameraMock = true;
-  return settings;
-}
+#include "AppSettings.h"
+#include "gui_loop.h"
 
 //////////////////////////////////////////////////////////////
 // Interface as a function list
@@ -72,18 +59,6 @@ int main()
 {
   auto appSettings = MakeMockAppSettings();
   auto camera = FactorCamera(appSettings);
-  while(true) {
-    auto img = camera->grab();
-    cv::putText(img, "Press q to quit, press +/- to change contrast", cv::Point(10, 30), 
-                cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(255, 255, 255));
-    cv::imshow("img", img);
-    auto c = cv::waitKey(10);
-    if (c == '+')
-      camera->set_contrast(camera->get_contrast() + 0.05);
-    if (c == '-')
-      camera->set_contrast(camera->get_contrast() - 0.05);
-    if (c == 'q')
-      break;
-  }
+  gui_loop(camera);
   return 0;
 }
