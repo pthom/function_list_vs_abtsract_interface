@@ -41,8 +41,12 @@ struct CameraMockState: AnyState {
 
 StatefulFunctionList<CameraFunctions> FactorCameraMock()
 {
+  // The state is forcefuly hidden from the function list
   auto state = std::make_shared<CameraMockState>();
   StatefulFunctionList<CameraFunctions> r(state);
+
+  // In the implementation, `state->` acts as a synonym of `this->'
+  // if we were using an abstract class
   r->grab = [state]() {
       return MakeImageWithCounter(++ state->frameCounter);
   };
