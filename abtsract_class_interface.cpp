@@ -40,7 +40,7 @@ class CameraMock: public ICamera
 public:
   ~CameraMock() = default;
   cv::Mat grab() override {
-    return MakeImageWithCounter(++frameCounter_);
+    return MakeImageWithCounter(++frameCounter_, contrast_);
   }
   double get_contrast() override { return contrast_; };
   void set_contrast(double v) override { contrast_ = v; }
@@ -68,8 +68,15 @@ int main()
   auto camera = FactorCamera(appSettings);
   while(true) {
     auto img = camera->grab();
+    cv::putText(img, "Press q to quit, press +/- to change contrast", cv::Point(10, 30), 
+                cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(255, 255, 255));
     cv::imshow("img", img);
-    if (cv::waitKey(10) == 'q')
+    auto c = cv::waitKey(10);
+    if (c == '+')
+      camera->set_contrast(camera->get_contrast() + 0.05);
+    if (c == '-')
+      camera->set_contrast(camera->get_contrast() - 0.05);
+    if (c == 'q')
       break;
   }
   return 0;
