@@ -17,7 +17,7 @@ struct CameraFunctions: AnyFunctionList {
 };
 ````
 
-In the application code, instead of storing something like `std::unique_ptr<ICamera>`, a `StatefulFunctionList<CameraFunctions>` will be stored. This is a template class which contains the state of the implementation, but hides it from the application code.
+In the application code, instead of storing something like `std::unique_ptr<ICamera>` (which will in effect be a derivate that contains the actual state), a struct `StatefulFunctionList<CameraFunctions>` will be stored. This is a template class which contains the interface and the state of the implementation, but the states remains totally hidden it from the application code.
 
 # Full example:
 This example explores a possible use, where we need an interface and a factory that depends on the application settings (strategy pattern).
